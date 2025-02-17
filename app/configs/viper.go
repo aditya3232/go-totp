@@ -11,7 +11,7 @@ func NewViper() *viper.Viper {
 	config := viper.New()
 
 	config.SetConfigName("config")
-	config.SetConfigType("json")
+	config.SetConfigType("env")
 	config.AddConfigPath("./../")
 	config.AddConfigPath("./")
 	err := config.ReadInConfig()

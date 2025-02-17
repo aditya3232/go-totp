@@ -7,9 +7,9 @@ import (
 
 func NewFiber(config *viper.Viper) *fiber.App {
 	var app = fiber.New(fiber.Config{
-		AppName:      config.GetString("app.name"),
+		AppName:      config.GetString("APP_NAME"),
 		ErrorHandler: NewErrorHandler(),
-		Prefork:      config.GetBool("web.prefork"), // menjalankan beberapa instance fiber di port yang sama (fiber berjalan di semua total cpu yang ada, tapi pakai port sama)
+		Prefork:      config.GetBool("WEB_PREFORK"), // menjalankan beberapa instance fiber di port yang sama (fiber berjalan di semua total cpu yang ada, tapi pakai port sama)
 	})
 
 	return app
