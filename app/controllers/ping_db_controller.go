@@ -3,16 +3,16 @@ package controllers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
+	"go-otp/app/interfaces"
 	"go-otp/app/objects"
-	"go-otp/app/services"
 )
 
 type PingDbController struct {
-	PingDbService *services.PingDbService
+	PingDbService interfaces.IPingDbService
 	Logrus        *logrus.Logger
 }
 
-func NewPingDbController(pingDbService *services.PingDbService, logrus *logrus.Logger) *PingDbController {
+func NewPingDbController(pingDbService interfaces.IPingDbService, logrus *logrus.Logger) *PingDbController {
 	return &PingDbController{
 		PingDbService: pingDbService,
 		Logrus:        logrus,
