@@ -11,6 +11,7 @@ type RouteConfig struct {
 	App              *fiber.App
 	Log              *logrus.Logger
 	PingDbController *controllers.PingDbController
+	UserController   *controllers.UserController
 }
 
 func (c *RouteConfig) Setup() {
@@ -37,5 +38,8 @@ func (rc *RouteConfig) SetupGuestRoute() {
 	GuestGroup := rc.App.Group("/api")
 
 	GuestGroup.Get("/ping", rc.PingDbController.Ping)
+
+	GuestGroup.Post("/users", rc.UserController.Create)
+	GuestGroup.Get("/users", rc.UserController.Get)
 
 }
