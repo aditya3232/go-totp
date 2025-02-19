@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/sirupsen/logrus"
 	"go-otp/app/entities"
+	"go-otp/app/models"
 	"gorm.io/gorm"
 )
 
@@ -21,8 +22,8 @@ func (r *UserRepository) Get(mysql *gorm.DB) (users []entities.User, err error) 
 	return users, err
 }
 
-func (r *UserRepository) FindByEmail(mysql *gorm.DB, email string) (user entities.User, err error) {
-	err = mysql.Where("email = ?", email).First(&user).Error
+func (r *UserRepository) FindByEmail(mysql *gorm.DB, request *models.FindUserByEmailRequest) (user *entities.User, err error) {
+	err = mysql.Where("email = ?", request.Email).First(&user).Error
 	return
 }
 
@@ -31,7 +32,7 @@ func (r *UserRepository) UpdateColumn(mysql *gorm.DB, id int, column string, val
 	return
 }
 
-func (r *UserRepository) Create(mysql *gorm.DB, user entities.User) (err error) {
-	err = mysql.Create(&user).Error
+func (r *UserRepository) Create(mysql *gorm.DB, request *entities.User) (err error) {
+	err = mysql.Create(&request).Error
 	return
 }

@@ -12,6 +12,7 @@ type RouteConfig struct {
 	Log              *logrus.Logger
 	PingDbController *controllers.PingDbController
 	UserController   *controllers.UserController
+	TotpController   *controllers.TotpController
 }
 
 func (c *RouteConfig) Setup() {
@@ -41,5 +42,9 @@ func (rc *RouteConfig) SetupGuestRoute() {
 
 	GuestGroup.Post("/users", rc.UserController.Create)
 	GuestGroup.Get("/users", rc.UserController.Get)
+	GuestGroup.Get("/user/email", rc.UserController.FindByEmail)
 
+	GuestGroup.Post("/totp/enrollment/init", rc.TotpController.InitiateEnrollment)
+	GuestGroup.Post("/totp/enrollment/confirm", rc.TotpController.ConfirmEnrollment)
+	GuestGroup.Post("/totp/verify", rc.TotpController.VerifyTotp)
 }

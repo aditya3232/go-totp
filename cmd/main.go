@@ -9,6 +9,7 @@ func main() {
 	viperConfig := configs.NewViper()
 	logrus := configs.NewLogger(viperConfig)
 	mysqlDB := configs.NewDatabase(viperConfig, logrus)
+	redis := configs.NewRedis(viperConfig, logrus)
 	validate := configs.NewValidator(viperConfig)
 	app := configs.NewFiber(viperConfig)
 
@@ -18,6 +19,7 @@ func main() {
 		Logrus:   logrus,
 		Validate: validate,
 		Config:   viperConfig,
+		Redis:    redis,
 	})
 
 	webPort := viperConfig.GetInt("WEB_PORT")

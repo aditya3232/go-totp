@@ -29,7 +29,7 @@ func NewUserService(mysql *gorm.DB, logrus *logrus.Logger, validate *validator.V
 }
 
 func (s *UserService) Get(ctx context.Context) (users []models.UserResponse, err error) {
-	tx := s.Mysql.WithContext(ctx).Begin()
+	tx := s.Mysql.WithContext(ctx)
 
 	userEntities, err := s.UserRepo.Get(tx)
 	if err != nil {
@@ -44,6 +44,33 @@ func (s *UserService) Get(ctx context.Context) (users []models.UserResponse, err
 			Email:   user.Email,
 			TOTPKey: user.TOTPKey,
 		}
+	}
+
+	return users, nil
+}
+
+func (s *UserService) FindByEmail(ctx context.Context, request *models.FindUserByEmailRequest) (users *models.UserResponse, err error) {
+	tx := s.Mysql.WithContext(ctx)
+
+	if err := s.Validate.Struct(request); err != nil {
+		s.Logrus.WithError(err).Error("error validating request body")
+		return nil, fiber.ErrBadRequest
+	}
+
+	newReq := &models.FindUserByEmailRequest{
+		Email: request.Email,
+	}
+
+	usersEntities, err := s.UserRepo.FindByEmail(tx, newReq)
+	if err != nil {
+		s.Logrus.WithError(err).Error("error getting users")
+		return nil, fiber.ErrInternalServerError
+	}
+
+	users = &models.UserResponse{
+		Name:    usersEntities.Name,
+		Email:   usersEntities.Email,
+		TOTPKey: usersEntities.TOTPKey,
 	}
 
 	return users, nil
@@ -64,7 +91,7 @@ func (s *UserService) Create(ctx context.Context, request *models.CreateUserRequ
 		return fiber.ErrInternalServerError
 	}
 
-	user := entities.User{
+	user := &entities.User{
 		Name:     request.Name,
 		Email:    request.Email,
 		Password: string(hashedPassword),

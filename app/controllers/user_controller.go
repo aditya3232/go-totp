@@ -49,3 +49,22 @@ func (c *UserController) Get(ctx *fiber.Ctx) error {
 		Data:    users,
 	})
 }
+
+func (c *UserController) FindByEmail(ctx *fiber.Ctx) error {
+	request := new(models.FindUserByEmailRequest)
+	if err := ctx.BodyParser(request); err != nil {
+		c.Logrus.WithError(err).Error("error parsing request body")
+		return ctx.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse(err))
+	}
+
+	users, err := c.UserService.FindByEmail(ctx.UserContext(), request)
+	if err != nil {
+		c.Logrus.WithError(err).Error("error get users")
+		return ctx.Status(fiber.StatusInternalServerError).JSON(models.ErrorResponse(err))
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(models.Response{
+		Message: "success",
+		Data:    users,
+	})
+}

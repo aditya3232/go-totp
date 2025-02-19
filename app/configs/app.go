@@ -3,6 +3,7 @@ package configs
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"go-otp/app/controllers"
@@ -18,6 +19,7 @@ type BootstrapConfig struct {
 	Logrus   *logrus.Logger
 	Validate *validator.Validate
 	Config   *viper.Viper
+	Redis    *redis.Client
 }
 
 func Bootstrap(config *BootstrapConfig) {
@@ -27,15 +29,18 @@ func Bootstrap(config *BootstrapConfig) {
 	//	setup services
 	PingDbService := services.NewPingDbService(config.MysqlDB, config.Logrus)
 	UserService := services.NewUserService(config.MysqlDB, config.Logrus, config.Validate, UserRepository)
+	TotpService := services.NewTotpService(config.MysqlDB, config.Redis, config.Logrus, config.Validate, UserRepository)
 
 	//	setup controllers
 	PingDbController := controllers.NewPingDbController(PingDbService, config.Logrus)
 	UserController := controllers.NewUserController(config.Logrus, UserService)
+	TotpController := controllers.NewTotpControler(config.Logrus, TotpService)
 
 	routeConfig := routes.RouteConfig{
 		App:              config.App,
 		PingDbController: PingDbController,
 		UserController:   UserController,
+		TotpController:   TotpController,
 	}
 
 	routeConfig.Setup()

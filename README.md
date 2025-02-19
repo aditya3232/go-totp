@@ -6,3 +6,5 @@ Library
 - Viper (Configuration) : go get -u github.com/spf13/viper
 - Logrus : go get -u github.com/sirupsen/logrus
 - Validator : go get -u github.com/go-playground/validator/v10
+- TOTP : go get -u github.com/pquerna/otp
+- Redis : go get -u github.com/redis/go-redis/v9
